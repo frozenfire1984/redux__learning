@@ -1,3 +1,4 @@
+/*
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -65,3 +66,4 @@ export function Counter() {
     </div>
   );
 }
+*/
