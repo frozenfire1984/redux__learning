@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import {createStore} from 'redux'; //create store for storaging data
 import {connect, Provider} from 'react-redux'; //connect - for plug react components to store
+
+//lesson: https://www.youtube.com/watch?v=wzWZDh0dUYE
 
 const initialStore = {
   firstName: 'init name',
@@ -42,21 +44,21 @@ const store = createStore(rootReducer); //create store. We must create store onl
 
 console.log(store.getState());
 
-store.dispatch(actionChangeFirstName);
+//store.dispatch(actionChangeFirstName);
 
 console.log(store.getState());
 
-store.dispatch(actionChangeSecondName);
+//store.dispatch(actionChangeSecondName);
 
 console.log(store.getState());
 
-class MainComponent extends React.Component {
-  /*constructor(props) {
+class MainComponentClass extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       test: 'foo bar'
     }
-  }*/
+  }
   render() {
     console.log(this.props);
     return (
@@ -67,13 +69,43 @@ class MainComponent extends React.Component {
         <div>
           <input type="text" placeholder="second name"/>
         </div>*/}
-        <div>output: "{this.props.firstName}", "{this.props.secondName}" {/*{this.state.test}*/}</div>
+        <button>change</button>
+        <div>output: "{this.props.firstName}", "{this.props.secondName}"
+          <br/>
+          {this.state.test}
+        </div>
       </div>
     )
   }
 }
 
 
+const MainComponent = (props) => {
+
+
+  const test = useState("foo bar");
+
+  function ClickHandler(){
+    //console.log(val);
+    props.dispatch(actionChangeFirstName)
+  }
+
+  return (
+    <div>
+      {/*<div>
+          <input type="text" placeholder="first name"/>
+        </div>
+        <div>
+          <input type="text" placeholder="second name"/>
+        </div>*/}
+      <button onClick={ClickHandler}>change</button>
+      <div>output: "{props.firstName}", "{props.secondName}"
+        <br/>
+        {test}
+      </div>
+    </div>
+  )
+};
 
 //console.log(store.getState());
 
@@ -89,10 +121,10 @@ const mapStateToProp = (store_values) => {
 const WrappedMainComponent = connect(mapStateToProp)(MainComponent); //hand over data from store to components's props
 
 ReactDOM.render(
-  <React.StrictMode>
+  <>
     <Provider store={store}>
       <WrappedMainComponent/>
     </Provider>
-  </React.StrictMode>
+  </>
   ,document.getElementById("root")
 );
