@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
-import {createStore} from 'redux'; //create store for storaging data
+import {createStore, bindActionCreators} from 'redux'; //create store for storaging data
 import {connect, Provider} from 'react-redux'; //connect - for plug react components to store
 
 //lesson: https://www.youtube.com/watch?v=wzWZDh0dUYE
@@ -9,38 +9,47 @@ const initialStore = {
   firstName: 'John',
   secondName: 'Smith',
   email: '',
-  status: '',
+  status: false,
 };
 
-//actions:
 const ACTION_CHANGE_FIRST_NAME = 'ACTION_CHANGE_FIRST_NAME';
 const ACTION_CHANGE_SECOND_NAME = 'ACTION_CHANGE_SECOND_NAME';
+const ACTION_CHANGE_STATUS = 'ACTION_CHANGE_STATUS';
 
+//Actions Creators:
 //wrapper-interlayer for action for transfer him outer payload (data from inputs for write these to redux-store)
-const actionChangeFirstName = (value) => {
+//these dont need in we only read data from store
+const actionChangeFirstName = (value) => {    //<=ActionCreator
   return {
     type: ACTION_CHANGE_FIRST_NAME, //ID of action
     payload: value,
   };
-}
+};
 
-const actionChangeSecondName = (value) => {
+const actionChangeSecondName = (value) => {    //<=ActionCreator
   return {
     type: ACTION_CHANGE_SECOND_NAME, //ID of action
     payload: value,
   };
-}
+};
 
+const actionChangeStatus = (value) => {    //<=ActionCreator
+  return {
+    type: ACTION_CHANGE_STATUS, //ID of action
+    payload: value,
+  };
+};
 
+const rootReducer = (store = initialStore, actionCreator) => {
 
-
-
-const rootReducer = (store = initialStore, action) => {
-  switch (action.type) {
+  //this switch dont need in we only read data from store
+  switch (actionCreator.type) {
     case 'ACTION_CHANGE_FIRST_NAME':
-      return{...store, firstName: action.payload};
+      return{...store, firstName: actionCreator.payload};
     case 'ACTION_CHANGE_SECOND_NAME':
-      return{...store, secondName: action.payload};
+      return{...store, secondName: actionCreator.payload};
+    case 'ACTION_CHANGE_STATUS':
+      return{...store, status: actionCreator.payload};
   }
 
   return store;
@@ -54,7 +63,6 @@ This called each time when Store get dispatch.
 Dispatch called each time when change MainComponent's props
 MainComponent's props called each time when change inputs values
 */
-
 const store = createStore(rootReducer);
 
 //console.log(store.getState());
@@ -63,32 +71,63 @@ const store = createStore(rootReducer);
 //store.dispatch(actionChangeSecondName);
 //console.log(store.getState());
 
+
+const ChildComponent = (props) => {
+  const [{visible}, setVisible] = useState({visible: false});  //hack for enable states's identify ability in React Dev Tools; but some reason this don/t work with methods (
+  const [status, setStatus] = useState(false);
+
+  return (
+    <div>
+      {visible.toString()}
+      <br/>
+      status:
+      {status
+        ? <>login</>
+        : <>logout</>
+      }
+      <hr/>
+      {props.test}
+      <hr/>
+
+      <button onClick={() => setStatus(!status)}>change status</button>
+
+    </div>
+  )
+};
+
 class MainComponent extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      test: 'foo bar'
+      test: 'foo bar',
     };
 
-    this.reset = this.reset.bind(this)
+    //this.reset = this.reset.bind(this)
   }
-  reset(val) {
-    this.props.dispatch(actionChangeFirstName(val + " name"));
-    this.props.dispatch(actionChangeSecondName(val + " second name"));
-  }
+  /*reset(val) {
+    this.props.changeFirstName(val + " name");
+    this.props.changeSecondName(val + " second name");
+  }*/
   render() {
-    //console.log("from class");
-    //console.log(this.props);
-    //console.log(this.state);
+    console.log(this.props);
+
+    const {firstName,secondName,status,changeFirstName,changeSecondName,changeStatus} = this.props;
+
+    const reset = (val) => {
+      changeFirstName(val + " name");
+      changeSecondName(val + " second name");
+      changeStatus(false);
+    };
 
     return (
       <div>
         <div>
           <input
             type="text"
-            value={this.props.firstName}
+            value={firstName}
             onChange={(event) => {
-              this.props.dispatch(actionChangeFirstName(event.target.value));
+              changeFirstName(event.target.value);
             }}
             placeholder="first name"
           />
@@ -96,20 +135,31 @@ class MainComponent extends React.Component {
         <div>
           <input
             type="text"
-            value={this.props.secondName}
+            value={secondName}
             onChange={(event) => {
-              this.props.dispatch(actionChangeSecondName(event.target.value));
+              changeSecondName(event.target.value);
             }}
             placeholder="second name"
           />
         </div>
-        <button onClick={() => this.reset("Default")}>reset</button>
+        <div>
+          <label htmlFor="input_status">
+            Active:
+            <input
+              type="checkbox"
+              checked={status}
+              id="input_status"
+              onChange={(event) => {
+                changeStatus(!status);
+              }}
+            />
+          </label>
+        </div>
+        <button onClick={() => reset("Default")}>reset</button>
         <hr/>
         <div>
-          <pre>output: "{this.props.firstName}", "{this.props.secondName}"</pre>
-
-          {/*<br/>
-          {this.state.test}*/}
+          <pre>output: {`${firstName} ${secondName}, Status: ${status.toString()} `}</pre>
+          {/*<ChildComponent test="foo bar"/>*/}
         </div>
       </div>
     )
@@ -148,10 +198,20 @@ const transferStateToProp = (store_values) => {
   return {
     firstName: store_values.firstName,
     secondName: store_values.secondName,
+    status: store_values.status,
   }
 };
 
-const WrappedMainComponent = connect(transferStateToProp)(MainComponent); //hand over data and methods(etc dispatch) from redux-store to components's props
+const transferMethodsToProps = (dispatch) => {
+  return {
+    changeFirstName: bindActionCreators(actionChangeFirstName, dispatch),
+    changeSecondName: bindActionCreators(actionChangeSecondName, dispatch),
+    changeStatus: bindActionCreators(actionChangeStatus, dispatch),
+  }
+}
+
+
+const WrappedMainComponent = connect(transferStateToProp,transferMethodsToProps)(MainComponent); //hand over data and methods(include and dispatch) from redux-store to components's props
 
 ReactDOM.render(
   <React.StrictMode>
