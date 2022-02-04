@@ -113,23 +113,23 @@ class MainComponent extends React.Component {
   render() {
     console.log(this.props);
 
-    //const {firstName,secondName,status,changeFirstName,changeSecondName,changeStatus} = this.props;
-    const {firstName,secondName,status} = this.props;  //if transferMethodsToProps don't connect, and dispatch method working directionally
+    const {firstName,secondName,status,changeFirstName,changeSecondName,changeStatus} = this.props;
+    //const {firstName,secondName,status} = this.props;  //if transferMethodsToProps don't connect, and dispatch method working directionally
 
 
-    /*const reset = (val) => {
+    const reset = (val) => {
       changeFirstName(val + " name");
       changeSecondName(val + " second name");
       changeStatus(false);
-    };*/
+    };
 
 
     //if transferMethodsToProps don't connect, and dispatch method working directionally
-    const reset = (val) => {
+    /*const reset = (val) => {
       this.props.dispatch(actionChangeFirstName(val + " name"));
       this.props.dispatch(actionChangeSecondName(val + " second name"));
       this.props.dispatch(actionChangeStatus(false));
-    };
+    };*/
 
     return (
       <div>
@@ -138,8 +138,8 @@ class MainComponent extends React.Component {
             type="text"
             value={firstName}
             onChange={(event) => {
-              //changeFirstName(event.target.value);
-              this.props.dispatch(actionChangeFirstName(event.target.value)) //if transferMethodsToProps don't connect, and dispatch method working directionally
+              changeFirstName(event.target.value);
+              //this.props.dispatch(actionChangeFirstName(event.target.value)) //if transferMethodsToProps don't connect, and dispatch method working directionally
             }}
             placeholder="first name"
           />
@@ -149,8 +149,8 @@ class MainComponent extends React.Component {
             type="text"
             value={secondName}
             onChange={(event) => {
-              //changeSecondName(event.target.value);
-              this.props.dispatch(actionChangeSecondName(event.target.value))  //if transferMethodsToProps don't connect, and dispatch method working directionally
+              changeSecondName(event.target.value);
+              //this.props.dispatch(actionChangeSecondName(event.target.value))  //if transferMethodsToProps don't connect, and dispatch method working directionally
             }}
             placeholder="second name"
           />
@@ -163,13 +163,13 @@ class MainComponent extends React.Component {
               checked={status}
               id="input_status"
               onChange={(event) => {
-                //changeStatus(!status);
-                this.props.dispatch(actionChangeStatus(!status))   //if transferMethodsToProps don't connect, and dispatch method working directionally
+                changeStatus(!status);
+                //this.props.dispatch(actionChangeStatus(!status))   //if transferMethodsToProps don't connect, and dispatch method working directionally
               }}
             />
           </label>
         </div>
-        {/*<button onClick={() => reset("Default")}>reset</button>*/}
+        <button onClick={() => reset("Default")}>reset</button>
         <hr/>
         <div>
           <pre>output: {`${firstName} ${secondName}, Status: ${status.toString()} `}</pre>
@@ -225,10 +225,10 @@ const transferMethodsToProps = (dispatch) => {
 };
 
 //if transferMethodsToProps don't connect, and dispatch method working directionally
-const WrappedMainComponent = connect(transferStateToProp)(MainComponent); //hand over data and methods(include and dispatch) from redux-store to components's props
+//const WrappedMainComponent = connect(transferStateToProp)(MainComponent); //hand over data and methods(include and dispatch) from redux-store to components's props
 
 
-//const WrappedMainComponent = connect(transferStateToProp, transferMethodsToProps)(MainComponent);
+const WrappedMainComponent = connect(transferStateToProp, transferMethodsToProps)(MainComponent);
 
 ReactDOM.render(
   <React.StrictMode>
