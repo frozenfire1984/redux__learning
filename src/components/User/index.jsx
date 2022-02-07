@@ -1,26 +1,15 @@
 import React from "react";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import {actionChangeFirstName,actionChangeSecondName,actionChangeStatus} from '../store/actions'
+import {actionChangeFirstName,actionChangeSecondName,actionChangeStatus} from '../../store/actions'
+import {} from '../../styles/style.css'
 
-class MainComponent extends React.Component {
+class Index extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
-
-    this.state = {
-      test: 'foo bar',
-    };
-
-    //this.reset = this.reset.bind(this)
   }
-  /*reset(val) {
-    this.props.changeFirstName(val + " name");
-    this.props.changeSecondName(val + " second name");
-  }*/
   render() {
     console.log(this.props);
-
     const {firstName,secondName,status,changeFirstName,changeSecondName,changeStatus} = this.props;
     //const {firstName,secondName,status} = this.props;
 
@@ -72,8 +61,7 @@ class MainComponent extends React.Component {
         <button onClick={() => reset("Default")}>reset</button>
         <hr/>
         <div>
-          <pre>output: {`${firstName} ${secondName}, Status: ${status.toString()} `}</pre>
-          {/*<ChildComponent test="foo bar"/>*/}
+          output: {`${firstName} ${secondName}, Status: ${status.toString()} `}
         </div>
       </div>
     )
@@ -96,4 +84,4 @@ const transferMethodsToProps = (dispatch) => {
   }
 };
 
-export default connect(transferStateToProp, transferMethodsToProps)(MainComponent);
+export default connect(transferStateToProp, transferMethodsToProps)(Index);
