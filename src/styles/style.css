@@ -19,13 +19,14 @@ header {
 
 .header__layout {
   display: flex;
-  flex-wrap: wrap; }
+  flex-wrap: wrap;
+  gap: 20px; }
 
 .header__primary {
-  flex: 1 0 700px; }
+  flex: 2 0 500px; }
 
 .header__aside {
-  flex: 1 0 200px;
+  flex: 1 0 100px;
   background: #f2f2f2;
   padding: 20px;
   border-radius: 5px; }
@@ -52,5 +53,14 @@ aside {
 
 footer {
   border-top: 1px #e6e6e6 solid; }
+
+.form__item {
+  margin: 10px 0; }
+
+input[type="text"], input[type="number"], input[type="email"], input[type="password"] {
+  height: 30px;
+  border: 1px #e6e6e6 solid;
+  border-radius: 5px;
+  padding: 0 10px; }
 
 /*# sourceMappingURL=style.css.map */

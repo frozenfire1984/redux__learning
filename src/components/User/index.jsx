@@ -1,87 +1,73 @@
 import React from "react";
-import {bindActionCreators} from "redux";
-import {connect} from "react-redux";
-import {actionChangeFirstName,actionChangeSecondName,actionChangeStatus} from '../../store/actions'
-import {} from '../../styles/style.css'
 
-class Index extends React.Component {
+class User extends React.Component {
   constructor(props) {
     super(props);
+    this.handlerChangeFirstName = this.handlerChangeFirstName.bind(this);
+    this.handlerChangeSecondName = this.handlerChangeSecondName.bind(this);
+    this.handlerChangeStatus = this.handlerChangeStatus.bind(this);
+    this.handlerClickReset = this.handlerClickReset.bind(this);
+  }
+  handlerChangeFirstName (event) {
+    //this.props.dispatch(actionChangeFirstName(event.target.value))
+    this.props.changeFirstName(event.target.value)
+  };
+  handlerChangeSecondName (event) {
+    //this.props.dispatch(actionChangeSecondName(event.target.value))
+    this.props.changeSecondName(event.target.value)
+  }
+  handlerChangeStatus (event) {
+    this.props.changeStatus(!this.props.status)
+  }
+  handlerClickReset(val){
+    this.props.changeFirstName(val);
+    this.props.changeSecondName(val);
+    this.props.changeStatus(false);
   }
   render() {
+    console.log("this.props");
     console.log(this.props);
-    const {firstName,secondName,status,changeFirstName,changeSecondName,changeStatus} = this.props;
-    //const {firstName,secondName,status} = this.props;
-
-
-    const reset = (val) => {
-      changeFirstName(val + " name");
-      changeSecondName(val + " second name");
-      changeStatus(false);
-    };
+    //const {firstName,secondName,status,changeFirstName,changeSecondName,changeStatus} = this.props;
 
     return (
       <div>
-        <div>
+        <div className="form__item">
           <input
             type="text"
-            value={firstName}
-            onChange={(event) => {
-              changeFirstName(event.target.value);
-              //this.props.dispatch(actionChangeFirstName(event.target.value)) //if transferMethodsToProps don't connect, and dispatch method working directionally
-            }}
+            value={this.props.firstName}
+            onChange={this.handlerChangeFirstName}
             placeholder="first name"
           />
         </div>
-        <div>
+        <div className="form__item">
           <input
             type="text"
-            value={secondName}
-            onChange={(event) => {
-              changeSecondName(event.target.value);
-              //this.props.dispatch(actionChangeSecondName(event.target.value))  //if transferMethodsToProps don't connect, and dispatch method working directionally
-            }}
+            value={this.props.secondName}
+            onChange={this.handlerChangeSecondName}
             placeholder="second name"
           />
         </div>
-        <div>
+        <div className="form__item">
           <label htmlFor="input_status">
             Active:
             <input
               type="checkbox"
-              checked={status}
+              checked={this.props.status}
               id="input_status"
-              onChange={(event) => {
-                changeStatus(!status);
-                //this.props.dispatch(actionChangeStatus(!status))   //if transferMethodsToProps don't connect, and dispatch method working directionally
-              }}
+              onChange={this.handlerChangeStatus}
             />
           </label>
         </div>
-        <button onClick={() => reset("Default")}>reset</button>
+        <button onClick={() => this.handlerClickReset("Default")}>reset</button>
         <hr/>
         <div>
-          output: {`${firstName} ${secondName}, Status: ${status.toString()} `}
+          output: {`${this.props.firstName} ${this.props.secondName} `}
+          Status: {this.props.status.toString()}
         </div>
       </div>
     )
   }
 }
 
-const transferStateToProp = (store_values) => {
-  return {
-    firstName: store_values.firstName,
-    secondName: store_values.secondName,
-    status: store_values.status,
-  }
-};
+export default User;
 
-const transferMethodsToProps = (dispatch) => {
-  return {
-    changeFirstName: bindActionCreators(actionChangeFirstName, dispatch),
-    changeSecondName: bindActionCreators(actionChangeSecondName, dispatch),
-    changeStatus: bindActionCreators(actionChangeStatus, dispatch),
-  }
-};
-
-export default connect(transferStateToProp, transferMethodsToProps)(Index);
